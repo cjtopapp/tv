@@ -7,21 +7,56 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;cursor:none}
-video{width:100%;height:100%;object-fit:cover;display:block}
+video{width:100%;height:100%;object-fit:contain;display:block}
 </style>
 </head>
 <body>
-<video id="v" autoplay muted playsinline></video>
+<video id="v" autoplay playsinline></video>
 <script>
-var playlist=[
+var normal=[
 "https://res.cloudinary.com/duvoimzkv/video/upload/v1771035699/test_lxxvyu.mp4"
 ];
+var lunch=[
+"https://res.cloudinary.com/duvoimzkv/video/upload/v1771037277/lunch_e6o1lh.mp4"
+];
 var idx=0;
+var mode="";
 var v=document.getElementById("v");
-function play(){v.src=playlist[idx];v.play();}
-v.addEventListener("ended",function(){idx=(idx+1)%playlist.length;play();});
-v.addEventListener("error",function(){idx=(idx+1)%playlist.length;play();});
+
+function getMode(){
+var h=new Date().getHours();
+var m=new Date().getMinutes();
+var t=h*60+m;
+if(t>=720&&t<725)return "lunch";
+return "normal";
+}
+
+function play(){
+var cur=getMode();
+if(cur!==mode){mode=cur;idx=0;}
+var list=(mode==="lunch")?lunch:normal;
+v.src=list[idx];
+v.play();
+}
+
+v.addEventListener("ended",function(){
+var list=(mode==="lunch")?lunch:normal;
+idx=(idx+1)%list.length;
 play();
+});
+
+v.addEventListener("error",function(){
+var list=(mode==="lunch")?lunch:normal;
+idx=(idx+1)%list.length;
+play();
+});
+
+play();
+setInterval(function(){
+var cur=getMode();
+if(cur!==mode)play();
+},10000);
+
 document.body.addEventListener("click",function(){
 if(document.fullscreenElement)return;
 document.documentElement.requestFullscreen().catch(function(){});
