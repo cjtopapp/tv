@@ -11,7 +11,7 @@ video{width:100%;height:100%;object-fit:contain;display:block}
 </style>
 </head>
 <body>
-<video id="v" autoplay playsinline></video>
+<video id="v" autoplay muted playsinline></video>
 <script>
 var normal=[
 "https://res.cloudinary.com/duvoimzkv/video/upload/v1771479765/ns1_1_anbqs1.mp4"
@@ -22,6 +22,7 @@ var lunch=[
 var idx=0;
 var mode="";
 var v=document.getElementById("v");
+var clicked=false;
 
 function getMode(){
 var h=new Date().getHours();
@@ -36,6 +37,8 @@ var cur=getMode();
 if(cur!==mode){mode=cur;idx=0;}
 var list=(mode==="lunch")?lunch:normal;
 v.src=list[idx];
+if(mode==="lunch"&&clicked){v.muted=false;}
+else{v.muted=true;}
 v.play();
 }
 
@@ -52,12 +55,15 @@ play();
 });
 
 play();
+
 setInterval(function(){
 var cur=getMode();
 if(cur!==mode)play();
 },10000);
 
 document.body.addEventListener("click",function(){
+clicked=true;
+if(mode==="lunch"){v.muted=false;}
 if(document.fullscreenElement)return;
 document.documentElement.requestFullscreen().catch(function(){});
 });
